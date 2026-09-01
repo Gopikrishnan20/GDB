@@ -34,22 +34,47 @@ public class TestAccount {
         System.out.print("Enter account type: ");
         String accountType = scanner.nextLine();
 
-        Accounts account = new Accounts(accountNumber, accountHolderName, age, initialBalance, accountType);
-        account.setPin(1234);
+        Accounts account;
+        try {
+            account = new Accounts(accountNumber, accountHolderName, age, initialBalance, accountType);
+            account.setPin(1234);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Account creation FAILED: " + e.getMessage());
+            scanner.close();
+            return;
+        }
         System.out.println("Account created!");
         printAccount(account);
 
         System.out.println(">>> 2. Deposit Money");
-        System.out.println("Depositing ₹500.0: " + (account.deposit(500.0) ? "SUCCESS" : "FAILED"));
+        try {
+            account.deposit(500.0);
+            System.out.println("Depositing ₹500.0: SUCCESS");
+        } catch (AccountException e) {
+            System.out.println("Depositing ₹500.0: FAILED - " + e.getMessage());
+        }
         System.out.println("New balance: ₹" + account.getBalance());
-        boolean invalidDeposit = account.deposit(-100.0);
-        System.out.println("Depositing ₹-100.0: " + (invalidDeposit ? "SUCCESS" : "FAILED (Invalid amount)"));
+        try {
+            account.deposit(-100.0);
+            System.out.println("Depositing ₹-100.0: SUCCESS");
+        } catch (AccountException e) {
+            System.out.println("Depositing ₹-100.0: FAILED - " + e.getMessage());
+        }
 
         System.out.println(">>> 3. Withdraw Money");
-        System.out.println("Withdrawing ₹200.0: " + (account.withdraw(200.0, 1234) ? "SUCCESS" : "FAILED"));
+        try {
+            account.withdraw(200.0, 1234);
+            System.out.println("Withdrawing ₹200.0: SUCCESS");
+        } catch (AccountException e) {
+            System.out.println("Withdrawing ₹200.0: FAILED - " + e.getMessage());
+        }
         System.out.println("New balance: ₹" + account.getBalance());
-        boolean invalidWithdraw = account.withdraw(2000.0, 1234);
-        System.out.println("Withdrawing ₹2000.0: " + (invalidWithdraw ? "SUCCESS" : "FAILED (Insufficient balance)"));
+        try {
+            account.withdraw(2000.0, 1234);
+            System.out.println("Withdrawing ₹2000.0: SUCCESS");
+        } catch (AccountException e) {
+            System.out.println("Withdrawing ₹2000.0: FAILED - " + e.getMessage());
+        }
         System.out.println("Current balance: ₹" + account.getBalance());
 
         System.out.println(">>> 4. Creating Another Account");
@@ -71,12 +96,19 @@ public class TestAccount {
         System.out.print("Enter account type: ");
         String accountType2 = scanner.nextLine();
 
-        Accounts acc2 = new Accounts(accountNumber2, accountHolderName2, age2, initialBalance2, accountType2);
-        printAccount(acc2);
+        Accounts acc2 = null;
+        try {
+            acc2 = new Accounts(accountNumber2, accountHolderName2, age2, initialBalance2, accountType2);
+            printAccount(acc2);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Account creation FAILED: " + e.getMessage());
+        }
 
         System.out.println(">>> 5. All Accounts");
         printAccount(account);
-        printAccount(acc2);
+        if (acc2 != null) {
+            printAccount(acc2);
+        }
 
         System.out.println("==================================================");
         System.out.println("TEST COMPLETED!");

@@ -11,21 +11,26 @@ public class Accounts {
     public static final double MIN_BALANCE_SAVINGS = 500.0;
     public static final double MIN_BALANCE_CURRENT = 1000.0;
 
-    Accounts(int accountNumber, String name, int age, double initialBalance, String accountType) {
+    public Accounts(int accountNumber, String name, int age, double initialBalance, String accountType) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name cannot be empty");
         }
         if (age < MIN_AGE) {
             throw new IllegalArgumentException("Age must be at least " + MIN_AGE + " (given: " + age + ")");
         }
-        if (accountType == null
-                || !(accountType.equalsIgnoreCase("Savings") || accountType.equalsIgnoreCase("Current"))) {
-            throw new IllegalArgumentException("Account type must be 'Savings' or 'Current' (given: " + accountType + ")");
+        if (accountType == null || !(accountType.equalsIgnoreCase("Savings")
+                || accountType.equalsIgnoreCase("Current")
+                || accountType.equalsIgnoreCase("Fixed_Deposit")
+                || accountType.equalsIgnoreCase("Salary"))) {
+            throw new IllegalArgumentException("Invalid account type (given: " + accountType + ")");
         }
-        double minBalance = accountType.equalsIgnoreCase("Savings") ? MIN_BALANCE_SAVINGS : MIN_BALANCE_CURRENT;
-        if (initialBalance < minBalance) {
-            throw new IllegalArgumentException("Initial balance for " + accountType + " must be at least Rs. "
-                    + minBalance + " (given: Rs. " + initialBalance + ")");
+        if (accountType.equalsIgnoreCase("Savings") || accountType.equalsIgnoreCase("Current")) {
+            double minBalance = accountType.equalsIgnoreCase("Savings")
+                    ? MIN_BALANCE_SAVINGS : MIN_BALANCE_CURRENT;
+            if (initialBalance < minBalance) {
+                throw new IllegalArgumentException("Initial balance for " + accountType + " must be at least Rs. "
+                        + minBalance + " (given: Rs. " + initialBalance + ")");
+            }
         }
 
         this.accountNumber = accountNumber;
@@ -116,6 +121,10 @@ public class Accounts {
     }
     double getBalance() {
         return balance;
+    }
+
+    protected void setBalance(double balance) {
+        this.balance = balance;
     }
     String getAccountType() {
         return accountType;
